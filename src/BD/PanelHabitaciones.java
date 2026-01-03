@@ -10,10 +10,13 @@ import java.util.ArrayList;
 public class PanelHabitaciones extends JPanel {
 	private ArrayList<Habitacion> habitaciones;
 	private JPanel gridPanel;
+	private DatabaseManager db;
 	
 	public PanelHabitaciones() {
 		setLayout(new BorderLayout());
-		setBackground(new Color(236, 240, 241));
+		setBackground(new Color(245, 246, 250));
+		
+		db = DatabaseManager.getInstance();
 		
 		// Inicializar habitaciones
 		inicializarHabitaciones();
@@ -23,8 +26,8 @@ public class PanelHabitaciones extends JPanel {
 		add(topPanel, BorderLayout.NORTH);
 		
 		// Panel de grid de habitaciones
-		gridPanel = new JPanel(new GridLayout(4, 4, 20, 20));
-		gridPanel.setBackground(new Color(236, 240, 241));
+		gridPanel = new JPanel(new GridLayout(0, 4, 20, 20));
+		gridPanel.setBackground(new Color(245, 246, 250));
 		gridPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 		
 		// Crear tarjetas de habitaciones
@@ -32,22 +35,15 @@ public class PanelHabitaciones extends JPanel {
 			gridPanel.add(createRoomCard(hab));
 		}
 		
-		add(gridPanel, BorderLayout.CENTER);
+		JScrollPane scrollPane = new JScrollPane(gridPanel);
+		scrollPane.setBorder(null);
+		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+		add(scrollPane, BorderLayout.CENTER);
 	}
 	
 	private void inicializarHabitaciones() {
-		habitaciones = new ArrayList<>();
-		String[] categorias = {"INDIVIDUAL", "DOBLE", "SUITE", "PRESIDENCIAL"};
-		String[] estados = {"DISPONIBLE", "OCUPADA", "MANTENIMIENTO"};
-		
-		for (int i = 1; i <= 16; i++) {
-			String numero = String.format("NRO-%03d", i);
-			String categoria = categorias[(i - 1) % 4];
-			String estado = i % 5 == 0 ? "OCUPADA" : (i % 7 == 0 ? "MANTENIMIENTO" : "DISPONIBLE");
-			double precio = 50 + (i * 10);
-			
-			habitaciones.add(new Habitacion(numero, categoria, estado, precio));
-		}
+		// Cargar habitaciones desde la base de datos
+		habitaciones = db.obtenerTodasHabitaciones();
 	}
 	
 	private JPanel createTopPanel() {
@@ -55,9 +51,9 @@ public class PanelHabitaciones extends JPanel {
 		panel.setBackground(Color.WHITE);
 		panel.setBorder(new EmptyBorder(20, 20, 20, 20));
 		
-		JLabel titulo = new JLabel("Habitaciones");
+		JLabel titulo = new JLabel("🛏️ Habitaciones");
 		titulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
-		titulo.setForeground(new Color(44, 62, 80));
+		titulo.setForeground(new Color(30, 58, 95));
 		
 		JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		filterPanel.setBackground(Color.WHITE);
@@ -65,10 +61,17 @@ public class PanelHabitaciones extends JPanel {
 		JButton btnTodas = createFilterButton("Todas");
 		JButton btnDisponibles = createFilterButton("Disponibles");
 		JButton btnOcupadas = createFilterButton("Ocupadas");
+		JButton btnActualizar = createFilterButton("🔄 Actualizar");
+		
+		btnTodas.addActionListener(e -> filtrarHabitaciones("TODAS"));
+		btnDisponibles.addActionListener(e -> filtrarHabitaciones("DISPONIBLE"));
+		btnOcupadas.addActionListener(e -> filtrarHabitaciones("OCUPADA"));
+		btnActualizar.addActionListener(e -> actualizarHabitaciones());
 		
 		filterPanel.add(btnTodas);
 		filterPanel.add(btnDisponibles);
 		filterPanel.add(btnOcupadas);
+		filterPanel.add(btnActualizar);
 		
 		panel.add(titulo, BorderLayout.WEST);
 		panel.add(filterPanel, BorderLayout.EAST);
@@ -161,6 +164,9 @@ public class PanelHabitaciones extends JPanel {
 		
 		btnEstado.setBackground(colorEstado);
 		
+		// Add action listener to the button so clicking it also opens the dialog
+		btnEstado.addActionListener(e -> mostrarDetallesHabitacion(habitacion));
+		
 		bottomCard.add(btnEstado, BorderLayout.CENTER);
 		
 		// Agregar paneles al card
@@ -191,15 +197,69 @@ public class PanelHabitaciones extends JPanel {
 	}
 	
 	private void mostrarDetallesHabitacion(Habitacion habitacion) {
-		String mensaje = "Habitación: " + habitacion.getNumero() + "\n" +
-						 "Categoría: " + habitacion.getCategoria() + "\n" +
-						 "Estado: " + habitacion.getEstado() + "\n" +
-						 "Precio por noche: $" + habitacion.getPrecio();
+		// Panel para el formulario de edición
+		JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
 		
-		JOptionPane.showMessageDialog(this, mensaje, "Detalles de Habitación", JOptionPane.INFORMATION_MESSAGE);
+		panel.add(new JLabel("Categoría: " + habitacion.getCategoria()));
+		panel.add(new JLabel("Precio por noche: $" + habitacion.getPrecio()));
+		panel.add(new JLabel("Estado Actual: "));
+		
+		String[] estados = {"DISPONIBLE", "OCUPADA", "MANTENIMIENTO"};
+		JComboBox<String> cmbEstado = new JComboBox<>(estados);
+		cmbEstado.setSelectedItem(habitacion.getEstado());
+		panel.add(cmbEstado);
+		
+		int result = JOptionPane.showConfirmDialog(this, panel, 
+				"Gestionar Habitación " + habitacion.getNumero(), 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+				
+		if (result == JOptionPane.OK_OPTION) {
+			String nuevoEstado = (String) cmbEstado.getSelectedItem();
+			
+			// Si el estado cambió, actualizar en BD
+			if (!nuevoEstado.equals(habitacion.getEstado())) {
+				boolean exito = db.actualizarEstadoHabitacion(habitacion.getNumero(), nuevoEstado);
+				
+				if (exito) {
+					JOptionPane.showMessageDialog(this, "Estado actualizado correctamente.");
+					actualizarHabitaciones(); // Recargar la vista
+				} else {
+					JOptionPane.showMessageDialog(this, "Error al actualizar el estado.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
 	}
 	
 	public ArrayList<Habitacion> getHabitaciones() {
 		return habitaciones;
+	}
+	
+	private void filtrarHabitaciones(String filtro) {
+		gridPanel.removeAll();
+		
+		ArrayList<Habitacion> habitacionesFiltradas;
+		if (filtro.equals("TODAS")) {
+			habitacionesFiltradas = habitaciones;
+		} else {
+			habitacionesFiltradas = new ArrayList<>();
+			for (Habitacion hab : habitaciones) {
+				if (hab.getEstado().equals(filtro)) {
+					habitacionesFiltradas.add(hab);
+				}
+			}
+		}
+		
+		for (Habitacion hab : habitacionesFiltradas) {
+			gridPanel.add(createRoomCard(hab));
+		}
+		
+		gridPanel.revalidate();
+		gridPanel.repaint();
+	}
+	
+	private void actualizarHabitaciones() {
+		inicializarHabitaciones();
+		filtrarHabitaciones("TODAS");
+		JOptionPane.showMessageDialog(this, "Habitaciones actualizadas", "Actualización", JOptionPane.INFORMATION_MESSAGE);
 	}
 }
