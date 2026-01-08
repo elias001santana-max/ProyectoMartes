@@ -1,0 +1,17 @@
+[
+  { "name": "SALUDO", "patterns": ["hola", "buenos dias", "buenas tardes", "buenas noches", "que tal", "saludos", "hey", "holi", "holis", "buen dia", "buenas"] },
+  { "name": "AGREGAR_CLIENTE", "patterns": ["agrega", "registrar", "añadir", "nuevo cliente", "nuevo huésped"] },
+  { "name": "CONTAR_CLIENTES", "patterns": ["cuántos clientes", "cuántos huéspedes", "número de clientes", "número de huéspedes"] },
+  { "name": "CONSULTAR_DISPONIBILIDAD", "patterns": ["habitaciones disponibles", "cuántas habitaciones disponibles", "disponibilidad de habitaciones"] },
+  { "name": "CONSULTAR_OCUPADAS", "patterns": ["habitaciones ocupadas", "cuáles están ocupadas", "qué habitaciones están ocupadas"] },
+  { "name": "CONSULTAR_MANTENIMIENTO", "patterns": ["habitaciones en mantenimiento", "qué habitaciones están en mantenimiento", "mantenimiento"] },
+  { "name": "LIBERAR_HABITACION", "patterns": ["liberar habitación", "ya no está ocupada", "desocupar habitación"] },
+  { "name": "LIBERAR_MANTENIMIENTO", "patterns": ["quitar mantenimiento", "ya no está en mantenimiento", "habilitar habitación"] },
+  { "name": "ESTADO_HABITACION", "patterns": ["estado de la habitación", "cómo está la habitación", "qué estado tiene la habitación"] },
+  { "name": "DETALLE_RESERVA", "patterns": ["detalle de reserva", "información de reserva", "consulta reserva"] },
+  { "name": "LISTAR_CLIENTES", "patterns": ["listar clientes", "mostrar huéspedes", "ver todos los clientes"] },
+  { "name": "LISTAR_RESERVAS", "patterns": ["listar reservas", "mostrar reservas", "ver todas las reservas"] },
+  { "name": "LISTAR_HABITACIONES", "patterns": ["listar habitaciones", "mostrar habitaciones", "ver todas las habitaciones"] },
+  { "name": "HISTORIAL_CLIENTE", "patterns": ["historial de cliente", "historial de huésped", "historial de un cliente"] },
+  { "name": "HISTORIAL_HABITACION", "patterns": ["historial de habitación", "historial de una habitación"] }
+]
