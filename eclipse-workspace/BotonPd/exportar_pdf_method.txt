@@ -1,0 +1,63 @@
+    private void exportarAPDF() {
+        try {
+            String userHome = System.getProperty("user.home");
+            String desktopPath = userHome + "\\Desktop\\Huespedes_" + 
+                java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".pdf";
+            
+            com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+            com.itextpdf.text.pdf.PdfWriter.getInstance(document, new java.io.FileOutputStream(desktopPath));
+            document.open();
+            
+            com.itextpdf.text.Font titleFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 18, com.itextpdf.text.Font.BOLD);
+            com.itextpdf.text.Paragraph title = new com.itextpdf.text.Paragraph("REPORTE DE HUÉSPEDES - HOTEL M4", titleFont);
+            title.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            document.add(title);
+            
+            com.itextpdf.text.Font dateFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 12);
+            com.itextpdf.text.Paragraph date = new com.itextpdf.text.Paragraph("Fecha: " + java.time.LocalDate.now(), dateFont);
+            date.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            document.add(date);
+            document.add(new com.itextpdf.text.Paragraph(" "));
+            
+            com.itextpdf.text.pdf.PdfPTable table = new com.itextpdf.text.pdf.PdfPTable(6);
+            table.setWidthPercentage(100);
+            
+            com.itextpdf.text.Font headerFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 10, com.itextpdf.text.Font.BOLD);
+            String[] headers = {"NOMBRE", "APELLIDO", "DOCUMENTO", "TELÉFONO", "HABITACIÓN", "ESTADO"};
+            
+            for (String header : headers) {
+                com.itextpdf.text.pdf.PdfPCell cell = new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(header, headerFont));
+                cell.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+                cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                cell.setPadding(5);
+                table.addCell(cell);
+            }
+            
+            com.itextpdf.text.Font dataFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 9);
+            for (Huesped h : huespedes) {
+                table.addCell(new com.itextpdf.text.Phrase(h.getNombre(), dataFont));
+                table.addCell(new com.itextpdf.text.Phrase(h.getApellido(), dataFont));
+                table.addCell(new com.itextpdf.text.Phrase(h.getDocumento(), dataFont));
+                table.addCell(new com.itextpdf.text.Phrase(h.getTelefono(), dataFont));
+                table.addCell(new com.itextpdf.text.Phrase(h.getHabitacionAsignada() != null ? h.getHabitacionAsignada() : "Sin asignar", dataFont));
+                table.addCell(new com.itextpdf.text.Phrase("Registrado", dataFont));
+            }
+            
+            document.add(table);
+            document.add(new com.itextpdf.text.Paragraph(" "));
+            document.add(new com.itextpdf.text.Paragraph("Total de huéspedes: " + huespedes.size(), dateFont));
+            document.close();
+            
+            JOptionPane.showMessageDialog(this, 
+                "PDF exportado exitosamente a:\n" + desktopPath, 
+                "Éxito", 
+                JOptionPane.INFORMATION_MESSAGE);
+                
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "Error al exportar PDF: " + e.getMessage() + "\n\nAsegúrate de agregar itextpdf-5.5.13.3.jar al Build Path del proyecto en Eclipse:\n1. Click derecho en el proyecto\n2. Build Path → Configure Build Path\n3. Libraries → Add JARs\n4. Selecciona lib/itextpdf-5.5.13.3.jar", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
