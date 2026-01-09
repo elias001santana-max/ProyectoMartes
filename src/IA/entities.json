@@ -1,0 +1,8 @@
+{
+  "habitacion": {
+    "pattern": "[0-9]+-{1,3}[A-Z]"
+  },
+  "nombre": {
+    "description": "Nombre completo del cliente"
+  }
+}

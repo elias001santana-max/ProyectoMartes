@@ -1,0 +1,20 @@
+{
+	"Saludo": "¡Hola! ¿En qué puedo ayudarte hoy?",
+	"Agregar_Cliente_OK": "Cliente agregado correctamente a la habitación {{habitacion}}",
+	"Falta_Nombre": "¿Cuál es el nombre del cliente?",
+	"Fuera_De_Dominio": "Solo puedo ayudar con la gestión del hotel",
+	"Error_Procesamiento": "Ocurrió un error al procesar tu solicitud",
+	"Contar_Clientes": "Actualmente hay {{cantidad}} clientes registrados.",
+	"Habitaciones_Disponibles": "Habitaciones disponibles: {{habitaciones}}",
+	"Habitaciones_Ocupadas": "Habitaciones ocupadas: {{habitaciones}}",
+	"Habitaciones_Mantenimiento": "Habitaciones en mantenimiento: {{habitaciones}}",
+	"Habitacion_Liberada": "La habitación {{habitacion}} ha sido marcada como disponible.",
+	"Mantenimiento_Liberado": "La habitación {{habitacion}} ha sido habilitada y ya no está en mantenimiento.",
+	"Estado_Habitacion": "La habitación {{habitacion}} está {{estado}}.",
+	"Detalle_Reserva": "Reserva #{{id}} para {{nombre}} en habitación {{habitacion}} del {{entrada}} al {{salida}}. Estado: {{estado}}.",
+	"Lista_Clientes": "Clientes: {{clientes}}",
+	"Lista_Reservas": "Reservas: {{reservas}}",
+	"Lista_Habitaciones": "Habitaciones: {{habitaciones}}",
+	"Historial_Cliente": "Historial del cliente {{nombre}}: {{historial}}",
+	"Historial_Habitacion": "Historial de la habitación {{habitacion}}: {{historial}}"
+}
